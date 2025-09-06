@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Kev test\",\r\n    \"email\": \"usermail@gmail.com\",\r\n    \"password\": \"Agc4mf9sdl\",\r\n    \"phones\": [\r\n        {\r\n            \"number\": \"12345\",\r\n            \"cityCode\": \"4\",\r\n            \"countryCode\": \"57\"\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"name\": \"Kev test\",\r\n    \"email\": \"usermwa@gmail.com\",\r\n    \"password\": \"Agc4mf9sdl\",\r\n    \"phones\": [\r\n        {\r\n            \"number\": \"12345\",\r\n            \"cityCode\": \"4\",\r\n            \"countryCode\": \"57\"\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -38,10 +38,19 @@
 		{
 			"name": "Login User",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Y2JhZmM4Zi03YzBhLTQ4ZjktODVlZS1kZjQ0ZDY2ZDQxYjgiLCJwYXNzd29yZCI6IiQyYSQxMCQxTzJMLi8udHV0TEVNUHhwOVd3Ym5lNGhlNlZOVlVlVU8zaE1iNzR2eUVPMzh6SXdRMklKcSIsImxhc3RfbG9naW4iOiIyMDI1LTA5LTA2VDAzOjQyOjA3LjIxOTIxODIwMCIsIm5hbWUiOiJLZXYgdGVzdCIsImV4cCI6MTc1NzE1MTcyNywiaWF0IjoxNzU3MTQ4MTI3LCJlbWFpbCI6InVzZXJtd2FAZ21haWwuY29tIn0.P1Td_k8wD3Wjm3nqlwy1HqjJ4ZVk3UaLECbsk7BnXuI\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/users/1",
+					"raw": "http://localhost:8080/users/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -49,7 +58,7 @@
 					"port": "8080",
 					"path": [
 						"users",
-						"1"
+						"login"
 					]
 				}
 			},
