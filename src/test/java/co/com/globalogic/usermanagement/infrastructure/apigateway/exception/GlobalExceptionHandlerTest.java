@@ -1,6 +1,5 @@
 package co.com.globalogic.usermanagement.infrastructure.apigateway.exception;
 
-import co.com.globalogic.usermanagement.domain.exception.Error;
 import co.com.globalogic.usermanagement.domain.exception.ErrorException;
 import co.com.globalogic.usermanagement.domain.exception.ExceptionMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,11 +39,11 @@ public class GlobalExceptionHandlerTest {
 
         WebRequest request = mock(WebRequest.class);
 
-        ResponseEntity<Error> response = handler.handleErrorException(ex, request);
+        ResponseEntity<ErrorList> response = handler.handleErrorException(ex, request);
 
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getCode());
-        assertEquals(ExceptionMessage.BAD_REQUEST.getDetail(), response.getBody().getDetail());
+        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getErrors().get(0).getCode());
+        assertEquals(ExceptionMessage.BAD_REQUEST.getDetail(), response.getBody().getErrors().get(0).getDetail());
     }
 
     @Test
@@ -59,16 +58,16 @@ public class GlobalExceptionHandlerTest {
 
         MethodArgumentNotValidException ex =
                 new MethodArgumentNotValidException(methodParameter, bindingResult);
-        ResponseEntity<Error> response = handler.handleValidationExceptions(ex);
+        ResponseEntity<ErrorList> response = handler.handleValidationExceptions(ex);
 
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getCode());
-        assertTrue(response.getBody().getDetail().contains("email"));
+        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getErrors().get(0).getCode());
+        assertTrue(response.getBody().getErrors().get(0).getDetail().contains("email"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void handleConstraintViolation_ShouldReturnBadRequest() {
+    void shouldHandleConstraintViolationException() {
         ConstraintViolation<Object> violation = mock(ConstraintViolation.class);
 
         Path path = mock(Path.class);
@@ -81,11 +80,11 @@ public class GlobalExceptionHandlerTest {
         ConstraintViolationException ex =
                 new ConstraintViolationException(Set.of(violation));
 
-        ResponseEntity<Error> response = handler.handleConstraintViolation(ex);
+        ResponseEntity<ErrorList> response = handler.handleConstraintViolation(ex);
 
         assertEquals(400, response.getStatusCodeValue());
-        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getCode());
-        assertTrue(response.getBody().getDetail().contains("username"));
+        assertEquals(ExceptionMessage.BAD_REQUEST.getCode(), response.getBody().getErrors().get(0).getCode());
+        assertTrue(response.getBody().getErrors().get(0).getDetail().contains("username"));
     }
 
     @Test
@@ -94,12 +93,12 @@ public class GlobalExceptionHandlerTest {
 
         WebRequest request = mock(WebRequest.class);
 
-        ResponseEntity<Error> response = handler.handleGeneralException(ex, request);
+        ResponseEntity<ErrorList> response = handler.handleGeneralException(ex, request);
 
         assertEquals(500, response.getStatusCodeValue());
-        assertEquals(ExceptionMessage.SERVER_ERROR.getCode(), response.getBody().getCode());
-        assertEquals(ExceptionMessage.SERVER_ERROR.getDetail(), response.getBody().getDetail());
-        assertNotNull(response.getBody().getTimestamp());
+        assertEquals(ExceptionMessage.SERVER_ERROR.getCode(), response.getBody().getErrors().get(0).getCode());
+        assertEquals(ExceptionMessage.SERVER_ERROR.getDetail(), response.getBody().getErrors().get(0).getDetail());
+        assertNotNull(response.getBody().getErrors().get(0).getTimestamp());
     }
 
     @SuppressWarnings("unused")

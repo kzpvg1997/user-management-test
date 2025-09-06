@@ -15,8 +15,8 @@ import org.springframework.web.context.request.WebRequest;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler{
@@ -24,66 +24,84 @@ public class GlobalExceptionHandler{
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ErrorException.class)
-    public ResponseEntity<Error> handleErrorException(ErrorException ex, WebRequest request) {
+    public ResponseEntity<ErrorList> handleErrorException(ErrorException ex, WebRequest request) {
         var error = Error.builder()
                 .timestamp(formatDate(LocalDateTime.now()))
                 .code(ex.getExceptionMessage().getCode())
                 .detail(ex.getExceptionMessage().getDetail())
                 .build();
+        var errorList = ErrorList.builder()
+                .errors(List.of(error))
+                .build();
 
         log.error(ex.getClass().getName(),ex);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Error> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
+    public ResponseEntity<ErrorList> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        var errorsListBuilder = new ArrayList<Error>();
+        ex.getBindingResult().getFieldErrors().forEach(errorField ->{
+                    var error = Error.builder()
+                            .timestamp(formatDate(LocalDateTime.now()))
+                            .code(ExceptionMessage.BAD_REQUEST.getCode())
+                            .detail(buildMessage(errorField.getField(),errorField.getDefaultMessage()))
+                            .build();
+                    errorsListBuilder.add(error);
+                });
 
-        var error = Error.builder()
-                .timestamp(formatDate(LocalDateTime.now()))
-                .code(ExceptionMessage.BAD_REQUEST.getCode())
-                .detail(errors.toString())
+        var errorList = ErrorList.builder()
+                .errors(errorsListBuilder)
                 .build();
 
         log.error(ex.getClass().getName(),ex);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Error> handleConstraintViolation(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(cv ->
-                errors.put(cv.getPropertyPath().toString(), cv.getMessage()));
-
-        var error = Error.builder()
-                .timestamp(formatDate(LocalDateTime.now()))
-                .code(ExceptionMessage.BAD_REQUEST.getCode())
-                .detail(errors.toString())
+    public ResponseEntity<ErrorList> handleConstraintViolation(ConstraintViolationException ex) {
+        var errorsListBuilder = new ArrayList<Error>();
+        ex.getConstraintViolations().forEach(cv ->{
+                    var error = Error.builder()
+                            .timestamp(formatDate(LocalDateTime.now()))
+                            .code(ExceptionMessage.BAD_REQUEST.getCode())
+                            .detail(buildMessage(cv.getPropertyPath().toString(),cv.getMessage()))
+                            .build();
+                    errorsListBuilder.add(error);
+                });
+        var errorList = ErrorList.builder()
+                .errors(errorsListBuilder)
                 .build();
 
         log.error(ex.getClass().getName(),ex);
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
     }
 
     // Otros errores no controlados
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Error> handleGeneralException(Exception ex, WebRequest request) {
+    public ResponseEntity<ErrorList> handleGeneralException(Exception ex, WebRequest request) {
         var error = Error.builder()
                 .timestamp(formatDate(LocalDateTime.now()))
                 .code(ExceptionMessage.SERVER_ERROR.getCode())
                 .detail(ExceptionMessage.SERVER_ERROR.getDetail())
                 .build();
 
+        var errorList = ErrorList.builder()
+                .errors(List.of(error))
+                .build();
+
         log.error(ex.getClass().getName(),ex);
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorList, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String formatDate(LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return date.format(formatter);
+    }
+
+    private String buildMessage(String fieldName, String message) {
+        return String.format("Field (%s) : %s", fieldName, message);
     }
 }

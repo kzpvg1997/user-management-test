@@ -72,3 +72,6 @@ Ejecuta:
 ./gradlew clean build
 ```
 
+## Ejecución del proyecto
+
+- Debe dirigirse a la clase **_MainApplication_** y ejecutar _"Run File"_
