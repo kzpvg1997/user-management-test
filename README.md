@@ -16,9 +16,16 @@ Usa **H2 Database** embebida, **Spring Security**, **JWT** (con Nimbus y JJWT), 
 
 ## Notas
 
+### Colección Postman
+
+- Para poder consumir las APIs del servicio se deja una colección postman:
+[user_management_postman_collection.json](collections/user_management_postman_collection.json)
+
+Ruta: /collections/user_management_postman_collection.json
+
 ### Base de datos H2
 
-El proyecto usa H2 en modo archivo (persistencia local).
+-  proyecto usa H2 en modo archivo (persistencia local).
 El archivo de la base de datos se guarda en la carpeta del proyecto:
 
 ```yaml

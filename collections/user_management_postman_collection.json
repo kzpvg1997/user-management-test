@@ -1,0 +1,59 @@
+{
+	"info": {
+		"_postman_id": "ecdc22ee-1f3b-4632-9c6a-49abe4d03a72",
+		"name": "1 Globalogic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8107463"
+	},
+	"item": [
+		{
+			"name": "Sin Up User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Kev test\",\r\n    \"email\": \"usermail@gmail.com\",\r\n    \"password\": \"Agc4mf9sdl\",\r\n    \"phones\": [\r\n        {\r\n            \"number\": \"12345\",\r\n            \"cityCode\": \"4\",\r\n            \"countryCode\": \"57\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/sing-up",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"sing-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
